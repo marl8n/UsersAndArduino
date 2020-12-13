@@ -6,6 +6,7 @@
 package com.marl8n.usersandarduino.ui;
 
 import com.marl8n.usersandarduino.connectiontodb.InitConnection;
+import com.marl8n.usersandarduino.service.UserService;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
 
@@ -16,6 +17,9 @@ import javax.swing.JOptionPane;
 public class MainUI extends javax.swing.JFrame {
 
     InitConnection initConnection = new InitConnection();
+    IFCreateUser ifcu = null;
+    IFListUsers iflsu = null;
+    IFLogin ifli = null;
     
     /**
      * Creates new form MainUI
@@ -38,22 +42,100 @@ public class MainUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        dp1 = new javax.swing.JDesktopPane();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        userOpt = new javax.swing.JMenu();
+        listUsers = new javax.swing.JMenuItem();
+        createUser = new javax.swing.JMenuItem();
+        login = new javax.swing.JMenuItem();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        javax.swing.GroupLayout dp1Layout = new javax.swing.GroupLayout(dp1);
+        dp1.setLayout(dp1Layout);
+        dp1Layout.setHorizontalGroup(
+            dp1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        dp1Layout.setVerticalGroup(
+            dp1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 276, Short.MAX_VALUE)
+        );
+
+        jMenu1.setText("Options");
+
+        userOpt.setText("Users");
+
+        listUsers.setText("List users");
+        listUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listUsersActionPerformed(evt);
+            }
+        });
+        userOpt.add(listUsers);
+
+        createUser.setText("Create User");
+        createUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createUserActionPerformed(evt);
+            }
+        });
+        userOpt.add(createUser);
+
+        login.setText("Log in");
+        login.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginActionPerformed(evt);
+            }
+        });
+        userOpt.add(login);
+
+        jMenu1.add(userOpt);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(dp1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(dp1)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void createUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createUserActionPerformed
+        if (ifcu == null || ifcu.isClosed() ) {
+            ifcu = new IFCreateUser();
+            dp1.add(ifcu);
+        }
+        ifcu.show();
+    }//GEN-LAST:event_createUserActionPerformed
+
+    private void listUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listUsersActionPerformed
+        if ( iflsu == null || iflsu.isClosed() ) {
+            iflsu = new IFListUsers();
+            dp1.add(iflsu);
+        }
+        iflsu.show();
+    }//GEN-LAST:event_listUsersActionPerformed
+
+    private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
+        if ( ifli == null || ifli.isClosed() ) {
+            ifli = new IFLogin();
+            dp1.add(ifli);
+        }
+        ifli.show();
+    }//GEN-LAST:event_loginActionPerformed
+
+    
     /**
      * @param args the command line arguments
      */
@@ -90,5 +172,12 @@ public class MainUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem createUser;
+    private javax.swing.JDesktopPane dp1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem listUsers;
+    private javax.swing.JMenuItem login;
+    private javax.swing.JMenu userOpt;
     // End of variables declaration//GEN-END:variables
 }
