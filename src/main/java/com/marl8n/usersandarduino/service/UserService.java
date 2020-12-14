@@ -6,8 +6,10 @@
 package com.marl8n.usersandarduino.service;
 
 import com.marl8n.usersandarduino.dao.UserDao;
+import com.marl8n.usersandarduino.dao.ValidateUser;
 import static com.marl8n.usersandarduino.dao.VisitDao.makeVisit;
 import com.marl8n.usersandarduino.models.User;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,7 +17,8 @@ import com.marl8n.usersandarduino.models.User;
  */
 public class UserService {
     public static void createUser(User user) {
-        UserDao.createUser(user);
+        User f = UserDao.createUser(user);
+        makeVisit(f);
     }
     
     public static void listUsers() {
@@ -26,7 +29,13 @@ public class UserService {
      *
      */
     public static void deleteUser(String dpi, String password) {
-        //
+        User user = ValidateUser.validate(dpi, password);
+        if (user != null) {
+            UserDao.deleteUser(user);
+            JOptionPane.showMessageDialog(null, "User deleted");
+        } else {
+            JOptionPane.showMessageDialog(null, "The DPI or the password are incorrect");
+        }
     }
 
     public static void editUser() {

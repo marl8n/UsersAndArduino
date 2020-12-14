@@ -5,12 +5,17 @@
  */
 package com.marl8n.usersandarduino.ui;
 
+import static com.marl8n.usersandarduino.arduino.ArduinoConnection.ino;
 import com.marl8n.usersandarduino.models.User;
 import com.marl8n.usersandarduino.service.UserService;
+import com.panamahitek.ArduinoException;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import jssc.SerialPortException;
 
 /**
  *
@@ -145,6 +150,13 @@ public class IFCreateUser extends javax.swing.JInternalFrame {
                     cbGenre.getSelectedItem().toString(),
                     String.valueOf(pfPassword.getPassword())
             );
+            try {
+                ino.sendData("1");
+            } catch (ArduinoException ex) {
+                Logger.getLogger(IFCreateUser.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SerialPortException ex) {
+                Logger.getLogger(IFCreateUser.class.getName()).log(Level.SEVERE, null, ex);
+            }
             UserService.createUser(user);
         } else {
             JOptionPane.showMessageDialog(rootPane, "Enter your data well");

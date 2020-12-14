@@ -5,21 +5,53 @@
  */
 package com.marl8n.usersandarduino.ui;
 
+import static com.marl8n.usersandarduino.arduino.ArduinoConnection.ino;
 import com.marl8n.usersandarduino.connectiontodb.InitConnection;
 import com.marl8n.usersandarduino.service.UserService;
+import com.panamahitek.ArduinoException;
 import java.sql.Connection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 
 /**
  *
  * @author MIDP9
  */
 public class MainUI extends javax.swing.JFrame {
+    
+    
+    public SerialPortEventListener spl = new SerialPortEventListener() {
+        @Override
+        public void serialEvent(SerialPortEvent spe) {
+            try {
+                if ( ino.isMessageAvailable()) {
+                    loginForm();
+                }
+            } catch (SerialPortException ex) {
+                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ArduinoException ex) {
+                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
+                ino.sendData("1");
+            } catch (ArduinoException ex) {
+                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SerialPortException ex) {
+                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    };
+    
 
     InitConnection initConnection = new InitConnection();
     IFCreateUser ifcu = null;
     IFListUsers iflsu = null;
     IFLogin ifli = null;
+    IFDatesBetween ifdb = null;
     
     /**
      * Creates new form MainUI
@@ -30,6 +62,11 @@ public class MainUI extends javax.swing.JFrame {
             //
         } catch ( Exception e ) {
             JOptionPane.showConfirmDialog(rootPane, e);
+        }
+        try {
+            ino.arduinoRXTX("COM5", 9600, spl);
+        } catch (ArduinoException ex) {
+            Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -49,6 +86,9 @@ public class MainUI extends javax.swing.JFrame {
         listUsers = new javax.swing.JMenuItem();
         createUser = new javax.swing.JMenuItem();
         login = new javax.swing.JMenuItem();
+        ifDateBetween = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -91,7 +131,32 @@ public class MainUI extends javax.swing.JFrame {
         });
         userOpt.add(login);
 
+        ifDateBetween.setText("Dates Between");
+        ifDateBetween.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ifDateBetweenActionPerformed(evt);
+            }
+        });
+        userOpt.add(ifDateBetween);
+
+        jMenuItem2.setText("Less visits");
+        jMenuItem2.setToolTipText("");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        userOpt.add(jMenuItem2);
+
         jMenu1.add(userOpt);
+
+        jMenuItem1.setText("Active visits");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
 
@@ -135,6 +200,29 @@ public class MainUI extends javax.swing.JFrame {
         ifli.show();
     }//GEN-LAST:event_loginActionPerformed
 
+    private void ifDateBetweenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ifDateBetweenActionPerformed
+        if ( ifdb == null || ifdb.isClosed() ) {
+            ifdb = new IFDatesBetween();
+            dp1.add(ifdb);
+        }
+        ifdb.show();
+    }//GEN-LAST:event_ifDateBetweenActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        VisitsInsights.howManyVisits();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        VisitsInsights.lessVisits();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    public void loginForm() {
+        if ( ifli == null || ifli.isClosed() ) {
+            ifli = new IFLogin();
+            dp1.add(ifli);
+        }
+        ifli.show();
+    }
     
     /**
      * @param args the command line arguments
@@ -174,8 +262,11 @@ public class MainUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem createUser;
     private javax.swing.JDesktopPane dp1;
+    private javax.swing.JMenuItem ifDateBetween;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem listUsers;
     private javax.swing.JMenuItem login;
     private javax.swing.JMenu userOpt;

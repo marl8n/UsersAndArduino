@@ -13,6 +13,7 @@ import java.sql.Date;
  */
 public class Visit {
     private int visitId;
+    private int userId;
     private User user;
     private Date dateVisited;
     private int active;
@@ -24,6 +25,15 @@ public class Visit {
     public Visit(User user) {
         this.user = user;
     }
+
+    public Visit(int visitId, int userId, Date dateVisited, int active) {
+        this.visitId = visitId;
+        this.userId = userId;
+        this.dateVisited = dateVisited;
+        this.active = active;
+    }
+    
+    
     
     
 }

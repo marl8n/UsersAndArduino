@@ -7,9 +7,13 @@ package com.marl8n.usersandarduino.dao;
 
 import com.marl8n.usersandarduino.connectiontodb.InitConnection;
 import com.marl8n.usersandarduino.models.User;
+import com.marl8n.usersandarduino.models.Visit;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,4 +33,35 @@ public class VisitDao {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+    
+    public static ArrayList<Object[]> getVisitsBetween(Date dateBegin, Date dateEnd) {
+        InitConnection dbConnection = new InitConnection();
+        ArrayList<Object[]> visits = new ArrayList();
+        String query = "SELECT u.name, v.date_visited, COUNT(*) AS visits_quantity\n" +
+"FROM visits AS v\n" +
+"JOIN users AS u\n" +
+"ON u.user_id = v.user_id\n" +
+"GROUP BY v.user_id\n" +
+"HAVING v.date_visited BETWEEN ? AND ?\n" +
+"ORDER BY visits_quantity;";
+        try ( Connection connection = dbConnection.getConnection() ) {
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setDate(1, dateBegin);
+            ps.setDate(2, dateEnd);
+            ResultSet rs = ps.executeQuery();
+            while( rs.next() ) {
+                visits.add(
+                        new Object[] {
+                            rs.getString("name"),
+                            rs.getTimestamp("date_visited"),
+                            rs.getInt("visits_quantity")
+                        }
+                );
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        
+        return visits;
+    } 
 }

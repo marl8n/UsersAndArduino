@@ -8,13 +8,11 @@ package com.marl8n.usersandarduino.dao;
 import com.marl8n.usersandarduino.connectiontodb.InitConnection;
 import com.marl8n.usersandarduino.models.User;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -22,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class UserDao {
     
-    public static void createUser(User user) {
+    public static User createUser(User user) {
         InitConnection dbConnection = new InitConnection();
         try (Connection connection = dbConnection.getConnection()) {
             PreparedStatement ps = null;
@@ -45,6 +43,30 @@ public class UserDao {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "An error ocurred, person not created");
         }
+        try ( Connection connection = dbConnection.getConnection() ) {
+            String query = "SELECT user_id, name, dpi, birthdate, genre, password FROM users WHERE dpi = ?";
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            ps = connection.prepareStatement(query);
+            ps.setString(1, user.getDpi());
+            rs = ps.executeQuery();
+            rs.next();
+            User userf = new User (
+                        Integer.valueOf(rs.getInt("user_id")),
+                        String.valueOf( rs.getString("name")),
+                        String.valueOf( rs.getString("dpi")),
+                        String.valueOf( rs.getString("password"))
+                );
+            if ( user.getPassword().equals(user.getPassword()) ) {
+                return userf;
+            }else {
+                JOptionPane.showMessageDialog(null, "The password or the DPI aren't correct");
+            }
+        } catch ( SQLException e ) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        
+        return null;
     }
     
     public static ArrayList<User> getUser() {

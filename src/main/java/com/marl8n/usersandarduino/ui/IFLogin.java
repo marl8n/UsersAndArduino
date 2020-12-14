@@ -5,9 +5,14 @@
  */
 package com.marl8n.usersandarduino.ui;
 
+import com.marl8n.usersandarduino.arduino.ArduinoConnection;
 import com.marl8n.usersandarduino.service.UserService;
+import com.panamahitek.ArduinoException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import jssc.SerialPortException;
 
 /**
  *
@@ -89,12 +94,19 @@ public class IFLogin extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void signInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInActionPerformed
-        if ( validateFields() ) {
-            UserService.signIn(tfDpi.getText(), String.valueOf(pfPassword.getPassword()));
-        } else {
-            JOptionPane.showMessageDialog(rootPane, "Enter your data well");
+        try {
+            if ( validateFields() ) {
+                UserService.signIn(tfDpi.getText(), String.valueOf(pfPassword.getPassword()));
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Enter your data well");
+            }
+            clearFields();
+            ArduinoConnection.ino.sendData("1");
+        } catch (ArduinoException ex) {
+            Logger.getLogger(IFLogin.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SerialPortException ex) {
+            Logger.getLogger(IFLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
-        clearFields();
     }//GEN-LAST:event_signInActionPerformed
 
     private void clearFields() {
